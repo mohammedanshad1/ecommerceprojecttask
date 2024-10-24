@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 class ProductViewModel extends GetxController {
   var isLoading = false.obs;
   var productList = <Product>[].obs;
+  var newArrivals = <Product>[].obs; 
+  var trendingProducts = <Product>[].obs; 
 
   final Dio _dio = Dio();
   final String baseUrl = 'https://fake-store-api.mock.beeceptor.com/api/products';
@@ -18,7 +20,6 @@ class ProductViewModel extends GetxController {
     super.onInit();
   }
 
-  // Fetch products from API
   Future<void> fetchProducts() async {
     try {
       isLoading(true);
@@ -27,6 +28,7 @@ class ProductViewModel extends GetxController {
       if (response.statusCode == 200) {
         var data = response.data;
         productList.value = List<Product>.from(data.map((x) => Product.fromJson(x)));
+        categorizeProducts(); 
       } else {
         _showErrorSnackBar('Failed to load products');
       }
@@ -37,13 +39,18 @@ class ProductViewModel extends GetxController {
     }
   }
 
-  // Show error snackbar
+  void categorizeProducts() {
+    newArrivals.value = productList.where((product) => product.availability).toList(); 
+    trendingProducts.value = productList.where((product) => product.discount > 0).toList(); 
+  }
+
   void _showErrorSnackBar(String message) {
     CustomSnackBar.show(
       Get.context!,
-      snackBarType: SnackBarType.fail,
+      snackBarType: SnackBarType.success,
       label: message,
       bgColor: Colors.redAccent,
     );
   }
 }
+
