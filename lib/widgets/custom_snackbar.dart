@@ -11,8 +11,8 @@ class CustomSnackBar {
     IconSnackBar.show(
       context,
       snackBarType: snackBarType,
-  
       label: label,
+      backgroundColor: bgColor ?? Colors.blue, // Default to blue if not provided
     );
   }
 }
